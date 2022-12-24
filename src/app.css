@@ -5,6 +5,7 @@
     font-weight: 400;
 
     --color: #ffffffde;
+    --page-bg-color: #242424;
     --bg-color: #3b3b3b;
     --bg-shadow-color: #2d2d2d;
     --bg-day: linear-gradient(317deg, rgb(82, 174, 255) 0%, rgb(0, 126, 210) 100%);
@@ -14,7 +15,7 @@
 
     color-scheme: dark;
     color: var(--color);
-    background-color: #242424;
+    background-color: var(--page-bg-color);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -29,6 +30,7 @@ body {
     place-items: center;
     min-width: 320px;
     min-height: 100vh;
+    transition: all 1s ease-in-out;
 }
 
 #app {
@@ -42,14 +44,51 @@ body {
 .modal-visible {
     opacity: 1 !important;
     visibility: visible !important;
+}
+
+.modal-visible:not(#settings) {
     top: 50% !important;
 }
 
-.modal-bg-visible {
+.modal-visible#settings {
+    top: 0px !important;
+}
+
+body.modal-visible {
+    background-color: var(--bg-color);
+}
+
+#app > main > *:not(#settings) {
+    transition: all 1s ease-in-out;
+}
+
+body.modal-visible > #app > main > *:not(#settings) {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+div.modal-bg-visible {
     visibility: visible !important;
     background: rgba(0, 0, 0, 0.25);
     -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
+}
+
+body.modal-bg-visible {
+    overflow: hidden;
+}
+
+h2,
+h4,
+span {
+    color: var(--color);
+    font-weight: 400;
+    font-family: inherit;
+}
+
+h4,
+span {
+    font-size: 1em;
 }
 
 button,
@@ -57,7 +96,7 @@ input {
     border-radius: 8px;
     padding: 0.6em 1.2em;
     font-size: 1em;
-    font-weight: 500;
+    font-weight: 400;
     font-family: inherit;
     color: var(--color);
     background-color: #252525;

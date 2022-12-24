@@ -1,11 +1,14 @@
 <script lang="ts">
     import dayjs from "dayjs";
-    import { dayjsShortFormat, type Forecast } from "../lib/data";
+
     import { linkToIcon } from "../lib/icons";
-    import FeatherIcon from "./icons/FeatherIcon.svelte";
+    import type { Forecast } from "../lib/weather.gov";
     import Hourly from "./Hourly.svelte";
-    import Modal from "./Modal.svelte";
+    import FeatherIcon from "./icons/FeatherIcon.svelte";
     import WeatherIcon from "./icons/WeatherIcon.svelte";
+    import Modal from "./Modal.svelte";
+
+    const dayjsFormat = "M/D h A";
 
     export let name: string;
     export let startTime: string;
@@ -32,39 +35,27 @@
     }
 </script>
 
-<div
-    style="background: {daytime ? 'var(--bg-day)' : 'var(--bg-night)'}; box-shadow: {daytime
-        ? 'var(--bg-day-shadow)'
-        : 'var(--bg-night-shadow)'} 2px 2px"
->
+<div style="background: {daytime ? 'var(--bg-day)' : 'var(--bg-night)'}; box-shadow: {daytime ? 'var(--bg-day-shadow)' : 'var(--bg-night-shadow)'} 2px 2px">
     <h2>{name}</h2>
     <h4 style="margin-block: 0 0.25em;">
-        {dayjs(startTime).format(dayjsShortFormat)} - {dayjs(endTime).format(dayjsShortFormat)}
+        {dayjs(startTime).format(dayjsFormat)} - {dayjs(endTime).format(dayjsFormat)}
     </h4>
     <h4 style="margin-block: 0 0.25em;">{daytime ? "High" : "Low"}: {tempHigh}°{tempUnit}</h4>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <h4 style="margin-block: 0 0.5em; cursor: pointer;" on:click={showDetailedForecast}>
         {shortForecast}
-        <FeatherIcon name="info" alt="More info" />
+        <FeatherIcon name="info" />
     </h4>
     <h4>Wind: {windDirection} {windSpeed}</h4>
     <br />
     <WeatherIcon name={linkToIcon(iconLink, daytime)} scale={5} />
     <br />
     <button style="margin-bottom: 1em;" on:click={showHourlyForecast}>Show hourly forecast</button>
-    <Modal
-        bind:this={modal}
-        bgColor={daytime ? "var(--bg-day)" : "var(--bg-night)"}
-        shadowColor={daytime ? "var(--bg-day-shadow)" : "var(--bg-night-shadow)"}
-    >
+    <Modal bind:this={modal} bgColor={daytime ? "var(--bg-day)" : "var(--bg-night)"} shadowColor={daytime ? "var(--bg-day-shadow)" : "var(--bg-night-shadow)"}>
         <h2>{name}</h2>
         <h4>{detailedForecast}</h4>
     </Modal>
-    <Modal
-        bind:this={hourlyForecastModal}
-        bgColor={daytime ? "var(--bg-day)" : "var(--bg-night)"}
-        shadowColor={daytime ? "var(--bg-day-shadow)" : "var(--bg-night-shadow)"}
-    >
+    <Modal bind:this={hourlyForecastModal} bgColor={daytime ? "var(--bg-day)" : "var(--bg-night)"} shadowColor={daytime ? "var(--bg-day-shadow)" : "var(--bg-night-shadow)"}>
         <Hourly {hourlyForecast} />
     </Modal>
 </div>

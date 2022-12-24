@@ -5,11 +5,15 @@
 
     export function show() {
         document.querySelector("#modal-background").classList.add("modal-bg-visible");
+        document.body.classList.add("modal-bg-visible");
         div.classList.add("modal-visible");
     }
 
     export function hide() {
-        document.querySelector("#modal-background").classList.remove("modal-bg-visible");
+        if (document.querySelectorAll(".modal-visible").length <= 1) {
+            document.querySelector("#modal-background").classList.remove("modal-bg-visible");
+            document.body.classList.remove("modal-bg-visible");
+        }
         div.classList.remove("modal-visible");
     }
 </script>

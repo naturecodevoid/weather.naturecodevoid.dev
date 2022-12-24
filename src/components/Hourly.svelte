@@ -1,7 +1,8 @@
 <script lang="ts">
     import dayjs from "dayjs";
-    import { dayjsVeryShortFormat, type Forecast } from "../lib/data";
+
     import { linkToIcon } from "../lib/icons";
+    import type { Forecast } from "../lib/weather.gov";
     import WeatherIcon from "./icons/WeatherIcon.svelte";
 
     export let hourlyForecast: Forecast[];
@@ -10,7 +11,7 @@
 {#each hourlyForecast as hour, i}
     <div>
         <h4 style="margin-block: 0 0.25em;">
-            {dayjs(hour.startTime).format(dayjsVeryShortFormat)} -
+            {dayjs(hour.startTime).format("h A")} -
             {hour.isDaytime ? "High" : "Low"}: {hour.temperature}°{hour.temperatureUnit} - Wind: {hour.windDirection}
             {hour.windSpeed}
         </h4>

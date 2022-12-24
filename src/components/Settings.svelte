@@ -1,0 +1,157 @@
+<script lang="ts">
+    import { getContext } from "svelte";
+
+    import type App from "../App.svelte";
+    import { appKey, global, placeStorageKey, saveAll } from "../lib/global";
+
+    const app = getContext(appKey) as App;
+
+    let div: HTMLDivElement;
+
+    export function show() {
+        document.body.classList.add("modal-visible");
+        document.body.classList.add("modal-bg-visible");
+        div.classList.add("modal-visible");
+    }
+
+    function hide() {
+        getLatLonFromPlace();
+        app.refresh();
+        document.body.classList.remove("modal-visible");
+        document.body.classList.remove("modal-bg-visible");
+        div.classList.remove("modal-visible");
+    }
+
+    if (localStorage.getItem(placeStorageKey) != null) global.place = localStorage.getItem(placeStorageKey);
+
+    let dataPromise: Promise<{
+        latitude: number;
+        longitude: number;
+        name: string;
+    }> = getLatLonFromPlace();
+
+    async function getLatLonFromPlace() {
+        let data: {
+            latitude: number;
+            longitude: number;
+            name: string;
+        };
+        try {
+            data = await (await fetch(`https://s.naturecodevoid.dev/arcgis/${global.place}`)).json();
+        } catch (e) {
+            throw "Invalid location input";
+        }
+        global.latLon = `${data.latitude},${data.longitude}`;
+        return data;
+    }
+
+    let throttleId: number;
+
+    function onLocationInput() {
+        saveAll();
+
+        if (throttleId) clearTimeout(throttleId);
+        throttleId = setTimeout(() => {
+            dataPromise = getLatLonFromPlace();
+        }, 1000);
+    }
+</script>
+
+<div id="settings" bind:this={div}>
+    <div class="content">
+        <h4>
+            Location input:<br />
+            <input bind:value={global.place} on:input={onLocationInput} placeholder="Washington DC" />
+        </h4>
+
+        <details>
+            <summary>Info on location to latitude and longitude conversion</summary>
+            <h4>
+                I have a Cloudflare worker running at s.naturecodevoid.dev and it uses <a
+                    href="https://developers.arcgis.com/rest/geocode/api-reference/overview-world-geocoding-service.htm"
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    ArcGIS/Esri's geocoding API
+                </a>
+                to convert a location to latitude and longitude. I cannot do this directly from the browser for security
+                reasons, so the only thing that the worker does is make a request to the geocoding API and return the resulting
+                latitude, longitude and place name. The worker does not do anything else with the data or input. However,
+                you may want to look at
+                <a href="https://www.esri.com/en-us/privacy/overview" target="_blank" rel="noreferrer">
+                    ArcGIS/Esri's privacy policy
+                </a> for more info on what ArcGIS/Esri does with the data/input. If you don't trust ArcGIS/Esri or my Cloudflare
+                worker, you can look in Advanced options for info on manually getting your latitude and longitude.
+            </h4>
+        </details>
+
+        <button on:click={() => (dataPromise = getLatLonFromPlace())}>
+            Convert location to latitude and longitude
+        </button>
+
+        {#await dataPromise}
+            <h4>Waiting for data...</h4>
+        {:then data}
+            <h4>Resulting location: {data.name}</h4>
+            <h4>
+                <a
+                    href="https://www.openstreetmap.org/export/embed.html?marker={data.latitude},{data.longitude}&bbox={data.longitude -
+                        0.05},{data.latitude - 0.05},{data.longitude + 0.05},{data.latitude + 0.05}"
+                    target="_blank"
+                    rel="noreferrer">View on map</a
+                >
+            </h4>
+        {:catch error}
+            <h4 style="color: red;">{error}</h4>
+        {/await}
+
+        <details>
+            <summary>Advanced options</summary>
+            <h4>
+                Latitude and Longitude:<br />
+                <input bind:value={global.latLon} on:input={saveAll} placeholder="latitude,longitude" />
+            </h4>
+
+            <h4>
+                The easiest way to manually get your latitude and longitude is to go to Google Maps, find your location
+                and copy the latitude and longitude values from the URL (after the @, only the first 2 numbers). A comma
+                should seperate them. <strong
+                    >If you do manually get your latitude and longitude, make sure that the location input at the top of
+                    settings is empty.</strong
+                >
+            </h4>
+        </details>
+
+        <button on:click={hide}>Close</button>
+    </div>
+</div>
+
+<style>
+    #settings {
+        position: fixed;
+        left: 0;
+        top: 100%;
+        width: 100vw;
+        height: 100vh;
+        padding: 1em;
+        z-index: 11;
+        background: var(--bg-color);
+        visibility: hidden;
+        opacity: 0;
+        transition: all 1s ease-in-out;
+        display: flex;
+        flex-flow: column;
+        overflow-y: hidden;
+    }
+
+    .content {
+        flex: 1;
+        overflow-y: scroll;
+        max-width: calc(100vw - 2em);
+        padding-bottom: 3em;
+    }
+
+    details {
+        padding-bottom: 20px;
+    }
+</style>
