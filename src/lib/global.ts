@@ -1,14 +1,23 @@
-export const appKey = "app";
+import { writable } from "svelte/store";
 
-export const global = {
-    latLon: "",
-    place: "",
-};
+export const appContextKey = "app";
 
 export const latLonStorageKey = "latitude-longitude";
-export const placeStorageKey = "place";
+export const placeInputStorageKey = "place";
+export const placeOutputStorageKey = "place-output";
 
-export function saveAll() {
-    localStorage.setItem(latLonStorageKey, global.latLon);
-    localStorage.setItem(placeStorageKey, global.place);
-}
+export const latLon = writable(localStorage.getItem(latLonStorageKey) || "");
+export const placeInput = writable(localStorage.getItem(placeInputStorageKey) || "");
+export const placeOutput = writable(localStorage.getItem(placeOutputStorageKey) || "");
+
+let placeInputVal: string;
+
+latLon.subscribe((val) => {
+    localStorage.setItem(latLonStorageKey, val);
+    if (!placeInputVal) placeOutput.set(val);
+});
+placeInput.subscribe((val) => {
+    localStorage.setItem(placeInputStorageKey, val);
+    placeInputVal = val;
+});
+placeOutput.subscribe((val) => localStorage.setItem(placeOutputStorageKey, val));

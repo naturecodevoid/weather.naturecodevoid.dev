@@ -2,9 +2,9 @@
     import { getContext } from "svelte";
 
     import type App from "../App.svelte";
-    import { appKey, global, placeStorageKey, saveAll } from "../lib/global";
+    import { appContextKey, placeInput, latLon, placeOutput } from "../lib/global";
 
-    const app = getContext(appKey) as App;
+    const app = getContext(appContextKey) as App;
 
     let div: HTMLDivElement;
 
@@ -15,14 +15,11 @@
     }
 
     function hide() {
-        getLatLonFromPlace();
-        app.refresh();
+        getLatLonFromPlace().finally(() => app.refresh());
         document.body.classList.remove("modal-visible");
         document.body.classList.remove("modal-bg-visible");
         div.classList.remove("modal-visible");
     }
-
-    if (localStorage.getItem(placeStorageKey) != null) global.place = localStorage.getItem(placeStorageKey);
 
     let dataPromise: Promise<{
         latitude: number;
@@ -36,20 +33,22 @@
             longitude: number;
             name: string;
         };
+
         try {
-            data = await (await fetch(`https://s.naturecodevoid.dev/arcgis/${global.place}`)).json();
+            data = await (await fetch(`https://s.naturecodevoid.dev/arcgis/${$placeInput}`)).json();
         } catch (e) {
             throw "Invalid location input";
         }
-        global.latLon = `${data.latitude},${data.longitude}`;
+
+        latLon.set(`${data.latitude},${data.longitude}`);
+        placeOutput.set(data.name);
+
         return data;
     }
 
     let throttleId: number;
 
     function onLocationInput() {
-        saveAll();
-
         if (throttleId) clearTimeout(throttleId);
         throttleId = setTimeout(() => {
             dataPromise = getLatLonFromPlace();
@@ -61,7 +60,7 @@
     <div class="content">
         <h4>
             Location input:<br />
-            <input bind:value={global.place} on:input={onLocationInput} placeholder="Washington DC" />
+            <input bind:value={$placeInput} on:input={onLocationInput} placeholder="Washington DC" />
         </h4>
 
         <details>
@@ -70,24 +69,17 @@
                 I have a Cloudflare worker running at s.naturecodevoid.dev and it uses <a
                     href="https://developers.arcgis.com/rest/geocode/api-reference/overview-world-geocoding-service.htm"
                     target="_blank"
-                    rel="noreferrer"
-                >
+                    rel="noreferrer">
                     ArcGIS/Esri's geocoding API
                 </a>
-                to convert a location to latitude and longitude. I cannot do this directly from the browser for security
-                reasons, so the only thing that the worker does is make a request to the geocoding API and return the resulting
-                latitude, longitude and place name. The worker does not do anything else with the data or input. However,
-                you may want to look at
-                <a href="https://www.esri.com/en-us/privacy/overview" target="_blank" rel="noreferrer">
-                    ArcGIS/Esri's privacy policy
-                </a> for more info on what ArcGIS/Esri does with the data/input. If you don't trust ArcGIS/Esri or my Cloudflare
-                worker, you can look in Advanced options for info on manually getting your latitude and longitude.
+                to convert a location to latitude and longitude. I cannot do this directly from the browser for security reasons, so the only thing that the worker does is make a request to the geocoding
+                API and return the resulting latitude, longitude and place name. The worker does not do anything else with the data or input. However, you may want to look at
+                <a href="https://www.esri.com/en-us/privacy/overview" target="_blank" rel="noreferrer"> ArcGIS/Esri's privacy policy </a> for more info on what ArcGIS/Esri does with the data/input. If
+                you don't trust ArcGIS/Esri or my Cloudflare worker, you can look in Advanced options for info on manually getting your latitude and longitude.
             </h4>
         </details>
 
-        <button on:click={() => (dataPromise = getLatLonFromPlace())}>
-            Convert location to latitude and longitude
-        </button>
+        <button on:click={() => (dataPromise = getLatLonFromPlace())}>Convert location to latitude and longitude</button>
 
         {#await dataPromise}
             <h4>Waiting for data...</h4>
@@ -95,11 +87,10 @@
             <h4>Resulting location: {data.name}</h4>
             <h4>
                 <a
-                    href="https://www.openstreetmap.org/export/embed.html?marker={data.latitude},{data.longitude}&bbox={data.longitude -
-                        0.05},{data.latitude - 0.05},{data.longitude + 0.05},{data.latitude + 0.05}"
+                    href="https://www.openstreetmap.org/export/embed.html?marker={data.latitude},{data.longitude}&bbox={data.longitude - 0.05},{data.latitude - 0.05},{data.longitude +
+                        0.05},{data.latitude + 0.05}"
                     target="_blank"
-                    rel="noreferrer">View on map</a
-                >
+                    rel="noreferrer">View on map</a>
             </h4>
         {:catch error}
             <h4 style="color: red;">{error}</h4>
@@ -109,16 +100,12 @@
             <summary>Advanced options</summary>
             <h4>
                 Latitude and Longitude:<br />
-                <input bind:value={global.latLon} on:input={saveAll} placeholder="latitude,longitude" />
+                <input bind:value={$latLon} placeholder="latitude,longitude" />
             </h4>
 
             <h4>
-                The easiest way to manually get your latitude and longitude is to go to Google Maps, find your location
-                and copy the latitude and longitude values from the URL (after the @, only the first 2 numbers). A comma
-                should seperate them. <strong
-                    >If you do manually get your latitude and longitude, make sure that the location input at the top of
-                    settings is empty.</strong
-                >
+                The easiest way to manually get your latitude and longitude is to go to Google Maps, find your location and copy the latitude and longitude values from the URL (after the @, only the
+                first 2 numbers). A comma should seperate them. <strong>If you do manually get your latitude and longitude, make sure that the location input at the top of settings is empty.</strong>
             </h4>
         </details>
 
@@ -153,5 +140,9 @@
 
     details {
         padding-bottom: 20px;
+    }
+
+    summary {
+        cursor: pointer;
     }
 </style>

@@ -29,9 +29,12 @@ function sleep(ms: number) {
 async function getForecast(url: string) {
     for (let i = 0; i < 5; i++) {
         try {
-            return (await (await fetch(url, init)).json()).properties.periods as Forecast[];
+            const request = await fetch(url, init);
+            const json = await request.json();
+            if (request.status != 200) throw json.detail;
+            return json.properties.periods as Forecast[];
         } catch (err) {
-            if (i < 5) {
+            if (i < 4) {
                 await sleep(1000);
                 continue;
             } else throw `An error occurred: ${err}`;
@@ -45,7 +48,7 @@ export async function getData(latLon: string) {
         throw "Please go into Settings (bottom right) and enter the location you want to receive weather about!";
     const request = await fetch(`https://api.weather.gov/points/${latLon}`, init);
     const points = await request.json();
-    if (request.status != 200) throw `An error occurred: ${points.title}.${points.title.toLowerCase().includes("not found") ? " The latitude and longitude may not be formatted correctly." : ""}`;
+    if (request.status != 200) throw `An error occurred: ${points.detail}.${points.title.toLowerCase().includes("not found") ? " The latitude and longitude may not be formatted correctly." : ""}`;
     const dailyForecast = await getForecast(points.properties.forecast);
     const hourlyForecast = await getForecast(points.properties.forecastHourly);
 

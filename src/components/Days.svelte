@@ -3,11 +3,11 @@
     import { getContext, onMount } from "svelte";
 
     import type App from "../App.svelte";
-    import { appKey } from "../lib/global";
+    import { appContextKey } from "../lib/global";
     import { getHourlyForecastsBetweenStartAndEndTime, type Forecast } from "../lib/weather.gov";
     import Day from "./Day.svelte";
 
-    const app = getContext(appKey) as App;
+    const app = getContext(appContextKey) as App;
 
     onMount(() => {
         app.restoreScroll();
