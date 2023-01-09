@@ -7,6 +7,7 @@
     import Modal from "./components/Modal.svelte";
     import ModalBackground from "./components/ModalBackground.svelte";
     import SettingsBubble from "./components/SettingsBubble.svelte";
+    import WithLifecycle from "./components/WithLifecycle.svelte";
     import { appContextKey, latLon, placeOutput } from "./lib/global";
     import { getData } from "./lib/weather.gov";
 
@@ -38,7 +39,7 @@
     });
 
     let currentScrolled = 0;
-    let busy = false;
+    let busy = true;
 
     function onScroll() {
         if (!busy) currentScrolled = document.documentElement.scrollTop;
@@ -57,7 +58,7 @@
         <br />
         <button class="refresh" on:click={refresh} disabled={busy}>Refresh <WeatherIcon name="refresh" widthHeight={10} /></button>
         <h4 style="margin-top: 2em;">
-            Last refreshed: {lastRefreshed == null ? "Never" : lastRefreshed.format("MM/DD/YYYY h:mm:ss A")}
+            Last refreshed: {lastRefreshed == null ? "Never" : lastRefreshed.format("M/D h:mm:ss A")}
         </h4>
         <h4>Location: {$placeOutput || "Not specified"}</h4>
     </div>
@@ -67,7 +68,7 @@
     {:then data}
         <Days {...data} />
     {:catch error}
-        <h4 style="color: red; margin-bottom: 3em;">{error}</h4>
+        <WithLifecycle mount={() => (busy = false)}><h4 style="color: red; margin-bottom: 3em;">{error}</h4></WithLifecycle>
     {/await}
 
     <div>

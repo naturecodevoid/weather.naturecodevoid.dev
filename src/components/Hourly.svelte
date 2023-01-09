@@ -2,7 +2,7 @@
     import dayjs from "dayjs";
 
     import { linkToIcon } from "../lib/icons";
-    import type { Forecast } from "../lib/weather.gov";
+    import type { Forecast } from "../lib/types/forecast";
     import WeatherIcon from "./icons/WeatherIcon.svelte";
 
     export let hourlyForecast: Forecast[];

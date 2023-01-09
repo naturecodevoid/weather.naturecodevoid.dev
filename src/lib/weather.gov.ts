@@ -1,18 +1,7 @@
 import dayjs from "dayjs";
-
-export interface Forecast {
-    name: string;
-    startTime: string;
-    endTime: string;
-    isDaytime: boolean;
-    temperature: number;
-    temperatureUnit: string;
-    windSpeed: string;
-    windDirection: string;
-    icon: string;
-    shortForecast: string;
-    detailedForecast: string;
-}
+import type { Alert } from "./types/alert";
+import type { Forecast } from "./types/forecast";
+import { sleep } from "./util/sleep";
 
 const init: RequestInit = {
     headers: {
@@ -20,19 +9,13 @@ const init: RequestInit = {
     },
 };
 
-function sleep(ms: number) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
-
-async function getForecast(url: string) {
+async function getValFromWeatherAPI<T>(url: string, getVal: (obj: any) => any) {
     for (let i = 0; i < 5; i++) {
         try {
             const request = await fetch(url, init);
             const json = await request.json();
             if (request.status != 200) throw json.detail;
-            return json.properties.periods as Forecast[];
+            return getVal(json) as T;
         } catch (err) {
             if (i < 4) {
                 await sleep(1000);
@@ -49,10 +32,14 @@ export async function getData(latLon: string) {
     const request = await fetch(`https://api.weather.gov/points/${latLon}`, init);
     const points = await request.json();
     if (request.status != 200) throw `An error occurred: ${points.detail}.${points.title.toLowerCase().includes("not found") ? " The latitude and longitude may not be formatted correctly." : ""}`;
-    const dailyForecast = await getForecast(points.properties.forecast);
-    const hourlyForecast = await getForecast(points.properties.forecastHourly);
 
-    return { dailyForecast, hourlyForecast };
+    const dailyForecast = await getValFromWeatherAPI<Forecast[]>(points.properties.forecast, (obj) => obj.properties.periods);
+    const hourlyForecast = await getValFromWeatherAPI<Forecast[]>(points.properties.forecastHourly, (obj) => obj.properties.periods);
+    // in my very small amount of testing county seems to be more accurate than forecast zone, but feel free to tell me if this is not the case
+    const alerts = (await getValFromWeatherAPI<any[]>(`https://api.weather.gov/alerts/active/zone/${points.properties.county.split("/").at(-1)}`, (obj) => obj.features)).map<Alert>((val, i, arr) => (arr[i] = val.properties)).filter((val) => val.affectedZones.includes(points.properties.forecastZone) && val.status == "Actual")
+    navigator.clipboard.writeText(JSON.stringify(alerts, null, "    "))
+
+    return { dailyForecast, hourlyForecast, alerts };
 }
 
 export function getHourlyForecastsBetweenStartAndEndTime(hourlyForecasts: Forecast[], startTime: dayjs.Dayjs, endTime: dayjs.Dayjs) {

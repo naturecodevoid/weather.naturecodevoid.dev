@@ -4,7 +4,8 @@
 
     import type App from "../App.svelte";
     import { appContextKey } from "../lib/global";
-    import { getHourlyForecastsBetweenStartAndEndTime, type Forecast } from "../lib/weather.gov";
+    import { getHourlyForecastsBetweenStartAndEndTime } from "../lib/weather.gov";
+    import type { Forecast } from "../lib/types/forecast";
     import Day from "./Day.svelte";
 
     const app = getContext(appContextKey) as App;

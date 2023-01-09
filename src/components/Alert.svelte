@@ -8,30 +8,30 @@
     import WeatherIcon from "./icons/WeatherIcon.svelte";
     import Modal from "./Modal.svelte";
 
-    const dayjsFormat = "M/D h A";
+    const dayjsFormat = "M/D h:mm:ss A";
 
-    export let name: string;
-    export let startTime: string;
-    export let endTime: string;
-    export let daytime: boolean;
-    export let tempHigh: string;
-    export let tempUnit: string;
-    export let windSpeed: string;
-    export let windDirection: string;
-    export let shortForecast: string;
-    export let detailedForecast: string;
-    export let iconLink: string;
-    export let hourlyForecast: Forecast[];
-
-    let detailedForecastModal: Modal;
-    let hourlyForecastModal: Modal;
-
-    function showDetailedForecast() {
-        detailedForecastModal.show();
+    export let areaDesc: string;
+    export let affectedZones: string[];
+    export let effective: string;
+    export let expires: string;
+    export let status: string;
+    export let messageType: string;
+    export let category: string;
+    export let severity: string;
+    export let certainty: string;
+    export let urgency: string;
+    export let event: string;
+    export let headline: string | undefined;
+    export let description: string;
+    export let instruction: string | undefined;
+    export let parameters: {
+        NWSheadline: string[];
     }
 
-    function showHourlyForecast() {
-        hourlyForecastModal.show();
+    let infoModal: Modal;
+
+    function showInfo() {
+        infoModal.show();
     }
 </script>
 
@@ -42,7 +42,7 @@
     </h4>
     <h4 style="margin-block: 0 0.25em;">{daytime ? "High" : "Low"}: {tempHigh}°{tempUnit}</h4>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <h4 style="margin-block: 0 0.5em; cursor: pointer;" on:click={showDetailedForecast}>
+    <h4 style="margin-block: 0 0.5em; cursor: pointer;" on:click={showInfo}>
         {shortForecast}
         <FeatherIcon name="info" />
     </h4>
@@ -51,7 +51,7 @@
     <WeatherIcon name={linkToIcon(iconLink, daytime)} scale={5} />
     <br />
     <button style="margin-bottom: 1em;" on:click={showHourlyForecast}>Show hourly forecast</button>
-    <Modal bind:this={detailedForecastModal} bgColor={daytime ? "var(--bg-day)" : "var(--bg-night)"} shadowColor={daytime ? "var(--bg-day-shadow)" : "var(--bg-night-shadow)"}>
+    <Modal bind:this={infoModal} bgColor={daytime ? "var(--bg-day)" : "var(--bg-night)"} shadowColor={daytime ? "var(--bg-day-shadow)" : "var(--bg-night-shadow)"}>
         <h2>{name}</h2>
         <h4>{detailedForecast}</h4>
     </Modal>
