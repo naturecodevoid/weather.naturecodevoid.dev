@@ -55,7 +55,7 @@
 <main>
     <div style="margin-bottom: 3em;">
         <br />
-        <button class="refresh" on:click={refresh}>Refresh <WeatherIcon name="refresh" widthHeight={10} /></button>
+        <button class="refresh" on:click={refresh} disabled={busy}>Refresh <WeatherIcon name="refresh" widthHeight={10} /></button>
         <h4 style="margin-top: 2em;">
             Last refreshed: {lastRefreshed == null ? "Never" : lastRefreshed.format("MM/DD/YYYY h:mm:ss A")}
         </h4>

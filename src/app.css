@@ -103,10 +103,15 @@ input {
     cursor: pointer;
     transition: border-color 0.25s;
     box-shadow: rgb(49, 49, 49) 2px 2px;
+    transition: background-color 0.25s ease-in-out;
 }
 
 button {
     border: 1px solid transparent;
+}
+
+button:disabled {
+    background-color: #ca3737;
 }
 
 input {
