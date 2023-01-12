@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+
 import type { Alert } from "./types/alert";
 import type { Forecast } from "./types/forecast";
 import { sleep } from "./util/sleep";
@@ -36,8 +37,10 @@ export async function getData(latLon: string) {
     const dailyForecast = await getValFromWeatherAPI<Forecast[]>(points.properties.forecast, (obj) => obj.properties.periods);
     const hourlyForecast = await getValFromWeatherAPI<Forecast[]>(points.properties.forecastHourly, (obj) => obj.properties.periods);
     // in my very small amount of testing county seems to be more accurate than forecast zone, but feel free to tell me if this is not the case
-    const alerts = (await getValFromWeatherAPI<any[]>(`https://api.weather.gov/alerts/active/zone/${points.properties.county.split("/").at(-1)}`, (obj) => obj.features)).map<Alert>((val, i, arr) => (arr[i] = val.properties)).filter((val) => val.affectedZones.includes(points.properties.forecastZone) && val.status == "Actual")
-    navigator.clipboard.writeText(JSON.stringify(alerts, null, "    "))
+    const alerts = (await getValFromWeatherAPI<any[]>(`https://api.weather.gov/alerts/active/zone/${points.properties.county.split("/").at(-1)}`, (obj) => obj.features))
+        .map<Alert>((val, i, arr) => (arr[i] = val.properties))
+        .filter((val) => val.affectedZones.includes(points.properties.forecastZone) && val.status == "Actual");
+    navigator.clipboard.writeText(JSON.stringify(alerts, null, "    "));
 
     return { dailyForecast, hourlyForecast, alerts };
 }

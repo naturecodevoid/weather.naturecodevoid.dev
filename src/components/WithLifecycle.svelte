@@ -3,7 +3,7 @@
 
     export let mount: () => void;
 
-    onMount(mount)
+    onMount(mount);
 </script>
 
 <slot />

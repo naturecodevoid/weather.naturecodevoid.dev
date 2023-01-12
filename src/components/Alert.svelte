@@ -3,6 +3,7 @@
 
     import { linkToIcon } from "../lib/icons";
     import type { Forecast } from "../lib/types/forecast";
+    import type { MessageType, Severity } from "../lib/types/alert"
     import Hourly from "./Hourly.svelte";
     import FeatherIcon from "./icons/FeatherIcon.svelte";
     import WeatherIcon from "./icons/WeatherIcon.svelte";
@@ -15,9 +16,9 @@
     export let effective: string;
     export let expires: string;
     export let status: string;
-    export let messageType: string;
+    export let messageType: MessageType;
     export let category: string;
-    export let severity: string;
+    export let severity: Severity;
     export let certainty: string;
     export let urgency: string;
     export let event: string;
@@ -26,9 +27,14 @@
     export let instruction: string | undefined;
     export let parameters: {
         NWSheadline: string[];
-    }
+    };
 
     let infoModal: Modal;
+
+    let backgroundColor: string;
+    switch (messageType) {
+        case ""
+    }
 
     function showInfo() {
         infoModal.show();
