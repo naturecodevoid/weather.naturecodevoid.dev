@@ -47,5 +47,11 @@
     .content {
         flex: 1;
         overflow-y: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .content::-webkit-scrollbar {
+        display: none;
     }
 </style>

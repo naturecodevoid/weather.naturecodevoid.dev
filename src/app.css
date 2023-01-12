@@ -8,6 +8,7 @@
     --page-bg-color: #242424;
     --bg-color: #3b3b3b;
     --bg-shadow-color: #2d2d2d;
+
     --bg-day: linear-gradient(317deg, rgb(82, 174, 255) 0%, rgb(0, 126, 210) 100%);
     --bg-day-shadow: rgb(71, 148, 216);
     --bg-night: linear-gradient(317deg, rgb(0, 76, 168) 0%, rgb(0, 40, 92) 100%);
@@ -85,7 +86,7 @@ div.modal-bg-visible {
     backdrop-filter: blur(2px);
 }
 
-body.modal-bg-visible {
+*:has(body.modal-bg-visible) {
     overflow: hidden;
 }
 
@@ -110,7 +111,7 @@ input {
     font-weight: 400;
     font-family: inherit;
     color: var(--color);
-    background-color: #252525;
+    background-color: var(--page-bg-color);
     cursor: pointer;
     transition: border-color 0.25s;
     box-shadow: rgb(49, 49, 49) 2px 2px;
@@ -126,7 +127,7 @@ button:disabled {
 }
 
 input {
-    border: 1px solid #3a3a3a;
+    border: 1px solid var(--page-bg-color);
 }
 
 input:focus {

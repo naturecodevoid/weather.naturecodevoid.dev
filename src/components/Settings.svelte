@@ -7,11 +7,13 @@
     const app = getContext(appContextKey) as App;
 
     let div: HTMLDivElement;
+    let placeInputElement: HTMLInputElement;
 
     export function show() {
         document.body.classList.add("modal-visible");
         document.body.classList.add("modal-bg-visible");
         div.classList.add("modal-visible");
+        setTimeout(() => placeInputElement.focus(), 1000);
     }
 
     function hide() {
@@ -60,7 +62,7 @@
     <div class="content">
         <h4>
             Location input:<br />
-            <input bind:value={$placeInput} on:input={onLocationInput} placeholder="Washington DC" />
+            <input bind:this={placeInputElement} bind:value={$placeInput} on:input={onLocationInput} placeholder="Washington DC" />
         </h4>
 
         <details>
@@ -144,5 +146,9 @@
 
     summary {
         cursor: pointer;
+    }
+
+    input {
+        border: 1px solid var(--bg-shadow-color);
     }
 </style>
