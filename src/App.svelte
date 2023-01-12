@@ -2,6 +2,7 @@
     import dayjs from "dayjs";
     import { onMount, setContext } from "svelte";
 
+    import Alert from "./components/Alert.svelte";
     import Days from "./components/Days.svelte";
     import WeatherIcon from "./components/icons/WeatherIcon.svelte";
     import Modal from "./components/Modal.svelte";
@@ -54,6 +55,14 @@
 <svelte:window on:scroll={onScroll} />
 
 <main>
+    <br />
+
+    {#await dataPromise then { alerts }}
+        {#each alerts as alert}
+            <Alert {...alert} />
+        {/each}
+    {/await}
+
     <div style="margin-bottom: 3em;">
         <br />
         <button class="refresh" on:click={refresh} disabled={busy}>Refresh <WeatherIcon name="refresh" widthHeight={10} /></button>
@@ -65,7 +74,7 @@
 
     {#await dataPromise}
         <h4 style="margin-bottom: 3em;">Waiting for data...</h4>
-    {:then data}
+    {:then { alerts, ...data }}
         <Days {...data} />
     {:catch error}
         <WithLifecycle mount={() => (busy = false)}><h4 style="color: red; margin-bottom: 3em;">{error}</h4></WithLifecycle>

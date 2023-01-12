@@ -30,6 +30,7 @@ async function getValFromWeatherAPI<T>(url: string, getVal: (obj: any) => any) {
 export async function getData(latLon: string) {
     if (!latLon || latLon.split(",").length != 2 || typeof Number.parseFloat(latLon.split(",")[0]) != "number" || typeof Number.parseFloat(latLon.split(",")[1]) != "number")
         throw "Please go into Settings (bottom right) and enter the location you want to receive weather about!";
+
     const request = await fetch(`https://api.weather.gov/points/${latLon}`, init);
     const points = await request.json();
     if (request.status != 200) throw `An error occurred: ${points.detail}.${points.title.toLowerCase().includes("not found") ? " The latitude and longitude may not be formatted correctly." : ""}`;
@@ -40,7 +41,6 @@ export async function getData(latLon: string) {
     const alerts = (await getValFromWeatherAPI<any[]>(`https://api.weather.gov/alerts/active/zone/${points.properties.county.split("/").at(-1)}`, (obj) => obj.features))
         .map<Alert>((val, i, arr) => (arr[i] = val.properties))
         .filter((val) => val.affectedZones.includes(points.properties.forecastZone) && val.status == "Actual");
-    navigator.clipboard.writeText(JSON.stringify(alerts, null, "    "));
 
     return { dailyForecast, hourlyForecast, alerts };
 }

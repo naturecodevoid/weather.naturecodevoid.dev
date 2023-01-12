@@ -1,5 +1,5 @@
-export type MessageType = "Alert" | "Update" | "Cancel" | "Ack" | "Error"
-export type Severity = "Extreme" | "Severe" | "Moderate" | "Minor" | "Unknown"
+export type MessageType = "Alert" | "Update" | "Cancel" | "Ack" | "Error";
+export type Severity = "Extreme" | "Severe" | "Moderate" | "Minor" | "Unknown";
 
 export interface Alert {
     areaDesc: string;
@@ -13,10 +13,7 @@ export interface Alert {
     certainty: string;
     urgency: string;
     event: string;
-    headline?: string | undefined;
+    headline: string | undefined;
     description: string;
-    instruction?: string | undefined;
-    parameters: {
-        NWSheadline: string[];
-    };
+    instruction: string | undefined;
 }
