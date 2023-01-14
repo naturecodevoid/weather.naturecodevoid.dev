@@ -18,6 +18,7 @@
     });
 
     let iOSHomeScreenModal: Modal;
+    let pwaModal: Modal;
 
     let lastRefreshed = dayjs();
     let dataPromise = getData($latLon);
@@ -37,6 +38,10 @@
 
     onMount(() => {
         if (isiOS() && "standalone" in navigator && !navigator.standalone) iOSHomeScreenModal.show();
+        else if (!location.search.includes("standalone") && !localStorage.getItem("standalone-shown")) {
+            pwaModal.show();
+            localStorage.setItem("standalone-shown", "true");
+        }
     });
 
     let currentScrolled = 0;
@@ -96,6 +101,10 @@
 
     <Modal bind:this={iOSHomeScreenModal}>
         <h4>You seem to be on iOS or iPadOS which means you can add this website as an app to your homescreen for an even better experience! Just click the share icon and then Add to Home Screen.</h4>
+    </Modal>
+
+    <Modal bind:this={pwaModal}>
+        <h4>This website can be added as a PWA to your device. There should be a button somewhere to add it as an app. (this message will not be shown again)</h4>
     </Modal>
 </main>
 
