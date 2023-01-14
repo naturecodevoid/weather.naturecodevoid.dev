@@ -38,7 +38,7 @@
 
     onMount(() => {
         if (isiOS() && "standalone" in navigator && !navigator.standalone) iOSHomeScreenModal.show();
-        else if (!location.search.includes("standalone") && !localStorage.getItem("standalone-shown")) {
+        else if (!location.search.includes("standalone") && !localStorage.getItem("standalone-shown") && !isiOS()) {
             pwaModal.show();
             localStorage.setItem("standalone-shown", "true");
         }
