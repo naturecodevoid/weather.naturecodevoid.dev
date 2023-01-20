@@ -9,7 +9,7 @@
     import ModalBackground from "./components/ModalBackground.svelte";
     import SettingsBubble from "./components/SettingsBubble.svelte";
     import WithLifecycle from "./components/WithLifecycle.svelte";
-    import { appContextKey, latLon, placeOutput } from "./lib/global";
+    import { appContextKey, latLon, placeOutput, placeInput } from "./lib/global";
     import { getData } from "./lib/weather.gov";
 
     setContext(appContextKey, {
@@ -74,7 +74,7 @@
         <h4 style="margin-top: 2em;">
             Last refreshed: {lastRefreshed == null ? "Never" : lastRefreshed.format("M/D h:mm:ss A")}
         </h4>
-        <h4>Location: {$placeOutput || "Not specified"}</h4>
+        <h4>Location: {($placeOutput && !$placeInput && `${$placeOutput} (${$latLon.replace(",", ", ")})`) || $placeOutput || $latLon || "Not specified"}</h4>
     </div>
 
     {#await dataPromise}

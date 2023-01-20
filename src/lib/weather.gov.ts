@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 
+import { placeOutput } from "./global";
 import type { Alert } from "./types/alert";
 import type { Forecast } from "./types/forecast";
 import { sleep } from "./util/sleep";
@@ -41,6 +42,11 @@ export async function getData(latLon: string) {
     const alerts = (await getValFromWeatherAPI<any[]>(`https://api.weather.gov/alerts/active/zone/${points.properties.county.split("/").at(-1)}`, (obj) => obj.features))
         .map<Alert>((val, i, arr) => (arr[i] = val.properties))
         .filter((val) => val.affectedZones.includes(points.properties.forecastZone) && val.status == "Actual");
+    placeOutput.set(
+        `${points.properties.relativeLocation.city || points.properties.relativeLocation.properties.city}, ${
+            points.properties.relativeLocation.state || points.properties.relativeLocation.properties.state
+        }`,
+    );
 
     return { dailyForecast, hourlyForecast, alerts };
 }

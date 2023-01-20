@@ -43,7 +43,6 @@
         }
 
         latLon.set(`${data.latitude},${data.longitude}`);
-        placeOutput.set(data.name);
 
         return data;
     }
