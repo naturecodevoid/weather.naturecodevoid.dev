@@ -101,7 +101,6 @@
                 Latitude and Longitude:<br />
                 <input bind:value={$latLon} placeholder="latitude,longitude" />
             </h4>
-
             <h4>
                 The easiest way to manually get your latitude and longitude is to go to Google Maps, find your location and copy the latitude and longitude values from the URL (after the @, only the
                 first 2 numbers). A comma should separate them. <strong
