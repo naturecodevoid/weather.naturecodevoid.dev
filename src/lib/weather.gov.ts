@@ -36,17 +36,18 @@ export async function getData(latLon: string) {
     const points = await request.json();
     if (request.status != 200) throw `An error occurred: ${points.detail}.${points.title.toLowerCase().includes("not found") ? " The latitude and longitude may not be formatted correctly." : ""}`;
 
+    placeOutput.set(
+        `${points.properties.relativeLocation.city || points.properties.relativeLocation.properties.city}, ${
+            points.properties.relativeLocation.state || points.properties.relativeLocation.properties.state
+        }`,
+    );
+
     const dailyForecast = await getValFromWeatherAPI<Forecast[]>(points.properties.forecast, (obj) => obj.properties.periods);
     const hourlyForecast = await getValFromWeatherAPI<Forecast[]>(points.properties.forecastHourly, (obj) => obj.properties.periods);
     // in my very small amount of testing county seems to be more accurate than forecast zone, but feel free to tell me if this is not the case
     const alerts = (await getValFromWeatherAPI<any[]>(`https://api.weather.gov/alerts/active/zone/${points.properties.county.split("/").at(-1)}`, (obj) => obj.features))
         .map<Alert>((val, i, arr) => (arr[i] = val.properties))
         .filter((val) => val.affectedZones.includes(points.properties.forecastZone) && val.status == "Actual");
-    placeOutput.set(
-        `${points.properties.relativeLocation.city || points.properties.relativeLocation.properties.city}, ${
-            points.properties.relativeLocation.state || points.properties.relativeLocation.properties.state
-        }`,
-    );
 
     return { dailyForecast, hourlyForecast, alerts };
 }
