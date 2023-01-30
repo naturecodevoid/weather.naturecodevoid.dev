@@ -2,7 +2,8 @@
     import { getContext } from "svelte";
 
     import type App from "../App.svelte";
-    import { appContextKey, placeInput, latLon, placeOutput } from "../lib/global";
+    import { appContextKey, placeInput, latLon } from "../lib/global";
+    import Changelog from "./Changelog.svelte";
 
     const app = getContext(appContextKey) as App;
 
@@ -39,11 +40,11 @@
         try {
             data = await (await fetch(`https://s.naturecodevoid.dev/arcgis/${$placeInput}`)).json();
         } catch (e) {
+            latLon.set("");
             throw "Invalid location input";
         }
 
         latLon.set(`${data.latitude},${data.longitude}`);
-        placeOutput.set(data.name);
 
         return data;
     }
@@ -65,7 +66,7 @@
             <input bind:this={placeInputElement} bind:value={$placeInput} on:input={onLocationInput} placeholder="Washington DC" />
         </h4>
 
-        <details>
+        <details style="padding-bottom: 5px;">
             <summary>Info on location to latitude and longitude conversion</summary>
             <h4>
                 I have a Cloudflare worker running at s.naturecodevoid.dev and it uses <a
@@ -80,8 +81,6 @@
                 you don't trust ArcGIS/Esri or my Cloudflare worker, you can look in Advanced options for info on manually getting your latitude and longitude.
             </h4>
         </details>
-
-        <button on:click={() => (dataPromise = getLatLonFromPlace())}>Convert location to latitude and longitude</button>
 
         {#await dataPromise}
             <h4>Waiting for data...</h4>
@@ -104,11 +103,16 @@
                 Latitude and Longitude:<br />
                 <input bind:value={$latLon} placeholder="latitude,longitude" />
             </h4>
-
             <h4>
                 The easiest way to manually get your latitude and longitude is to go to Google Maps, find your location and copy the latitude and longitude values from the URL (after the @, only the
-                first 2 numbers). A comma should seperate them. <strong>If you do manually get your latitude and longitude, make sure that the location input at the top of settings is empty.</strong>
+                first 2 numbers). A comma should separate them. <strong
+                    >If you do manually get your latitude and longitude, make sure that the location input at the top of settings is empty or the manually entered latitude and longitude will be reset.</strong>
             </h4>
+        </details>
+
+        <details style="padding-bottom: 30px;">
+            <summary>Changelog</summary>
+            <Changelog includeAll={true} />
         </details>
 
         <button on:click={hide}>Close</button>
@@ -141,7 +145,7 @@
     }
 
     details {
-        padding-bottom: 20px;
+        padding-bottom: 25px;
     }
 
     summary {

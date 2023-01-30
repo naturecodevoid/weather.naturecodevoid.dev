@@ -14,16 +14,18 @@
     --bg-night: linear-gradient(317deg, rgb(0, 76, 168) 0%, rgb(0, 40, 92) 100%);
     --bg-night-shadow: rgb(0, 52, 119);
 
-    --bg-alert: #ca3737;
-    --bg-shadow-alert: #a32d2d;
-    --bg-update: #ffcb21;
-    --bg-shadow-update: #c59d1a;
-    --bg-cancel: #00ffff;
-    --bg-shadow-cancel: #00b6b6;
-    --bg-ack: #006eff;
-    --bg-shadow-ack: #004eb4;
-    --bg-error: #ff7b00;
-    --bg-shadow-error: #c96100;
+    --bg-disabled: #ca3737;
+
+    --bg-alert: #c96100;
+    --bg-shadow-alert: #a85100;
+    --bg-update: #c99a00;
+    --bg-shadow-update: #a78000;
+    --bg-cancel: #009ad6;
+    --bg-shadow-cancel: #007eaf;
+    --bg-ack: #0059ce;
+    --bg-shadow-ack: #004bad;
+    --bg-error: #a52323;
+    --bg-shadow-error: #831717;
 
     color-scheme: dark;
     color: var(--color);
@@ -71,7 +73,7 @@ body.modal-visible {
 }
 
 #app > main > *:not(#settings) {
-    transition: all 1s ease-in-out;
+    transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
 }
 
 body.modal-visible > #app > main > *:not(#settings) {
@@ -91,6 +93,7 @@ div.modal-bg-visible {
 }
 
 h2,
+h3,
 h4,
 span {
     color: var(--color);
@@ -123,7 +126,7 @@ button {
 }
 
 button:disabled {
-    background-color: var(--bg-alert);
+    background-color: var(--bg-disabled);
 }
 
 input {

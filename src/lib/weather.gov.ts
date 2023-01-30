@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 
+import { placeOutput } from "./global";
 import type { Alert } from "./types/alert";
 import type { Forecast } from "./types/forecast";
 import { sleep } from "./util/sleep";
@@ -34,6 +35,12 @@ export async function getData(latLon: string) {
     const request = await fetch(`https://api.weather.gov/points/${latLon}`, init);
     const points = await request.json();
     if (request.status != 200) throw `An error occurred: ${points.detail}.${points.title.toLowerCase().includes("not found") ? " The latitude and longitude may not be formatted correctly." : ""}`;
+
+    placeOutput.set(
+        `${points.properties.relativeLocation.city || points.properties.relativeLocation.properties.city}, ${
+            points.properties.relativeLocation.state || points.properties.relativeLocation.properties.state
+        }`,
+    );
 
     const dailyForecast = await getValFromWeatherAPI<Forecast[]>(points.properties.forecast, (obj) => obj.properties.periods);
     const hourlyForecast = await getValFromWeatherAPI<Forecast[]>(points.properties.forecastHourly, (obj) => obj.properties.periods);

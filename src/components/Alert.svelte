@@ -43,11 +43,11 @@
     <h4>
         {dayjs(effective).format(dayjsFormat)} - {dayjs(expires).format(dayjsFormat)}
     </h4>
-    <h4>Area: {areaDesc}</h4>
     <h4>Severity: {severity}</h4>
     <h4>Certainty: {certainty}</h4>
     <h4>Urgency: {urgency}</h4>
-    <h4 class="no">Category: {category}</h4>
+    <h4>Category: {category}</h4>
+    <h4 class="no">Area: {areaDesc}</h4>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <h4 style="margin-block: 0 0.5em; cursor: pointer;" on:click={showInfo}>
         More info
