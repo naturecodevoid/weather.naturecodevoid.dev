@@ -2,9 +2,10 @@ import { writable } from "svelte/store";
 
 export const appContextKey = "app";
 
-export const latLonStorageKey = "latitude-longitude";
-export const placeInputStorageKey = "place";
-export const placeOutputStorageKey = "place-output";
+const latLonStorageKey = "latitude-longitude";
+const placeInputStorageKey = "place";
+const placeOutputStorageKey = "place-output";
+export const standaloneShownKey = "standalone-shown";
 
 export const latLon = writable(localStorage.getItem(latLonStorageKey) || "");
 export const placeInput = writable(localStorage.getItem(placeInputStorageKey) || "");

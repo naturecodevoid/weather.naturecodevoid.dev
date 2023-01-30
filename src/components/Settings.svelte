@@ -3,6 +3,7 @@
 
     import type App from "../App.svelte";
     import { appContextKey, placeInput, latLon } from "../lib/global";
+    import Changelog from "./Changelog.svelte";
 
     const app = getContext(appContextKey) as App;
 
@@ -64,7 +65,7 @@
             <input bind:this={placeInputElement} bind:value={$placeInput} on:input={onLocationInput} placeholder="Washington DC" />
         </h4>
 
-        <details style="padding-bottom: 0px;">
+        <details style="padding-bottom: 5px;">
             <summary>Info on location to latitude and longitude conversion</summary>
             <h4>
                 I have a Cloudflare worker running at s.naturecodevoid.dev and it uses <a
@@ -108,6 +109,11 @@
             </h4>
         </details>
 
+        <details style="padding-bottom: 30px;">
+            <summary>Changelog</summary>
+            <Changelog includeAll={true} />
+        </details>
+
         <button on:click={hide}>Close</button>
     </div>
 </div>
@@ -138,7 +144,7 @@
     }
 
     details {
-        padding-bottom: 20px;
+        padding-bottom: 25px;
     }
 
     summary {

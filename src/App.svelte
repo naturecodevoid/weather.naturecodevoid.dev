@@ -3,13 +3,15 @@
     import { onMount, setContext } from "svelte";
 
     import Alert from "./components/Alert.svelte";
+    import Changelog from "./components/Changelog.svelte";
     import Days from "./components/Days.svelte";
     import WeatherIcon from "./components/icons/WeatherIcon.svelte";
     import Modal from "./components/Modal.svelte";
     import ModalBackground from "./components/ModalBackground.svelte";
     import SettingsBubble from "./components/SettingsBubble.svelte";
     import WithLifecycle from "./components/WithLifecycle.svelte";
-    import { appContextKey, latLon, placeOutput, placeInput } from "./lib/global";
+    import { getChangelog, latestVersion, latestVersionNumber } from "./lib/changelog";
+    import { appContextKey, latLon, placeOutput, placeInput, standaloneShownKey } from "./lib/global";
     import { getData } from "./lib/weather.gov";
 
     setContext(appContextKey, {
@@ -19,6 +21,7 @@
 
     let iOSHomeScreenModal: Modal;
     let pwaModal: Modal;
+    let updateModal: Modal;
 
     let lastRefreshed = dayjs();
     let dataPromise = getData($latLon);
@@ -29,8 +32,6 @@
         dataPromise = getData($latLon);
     }
 
-    setInterval(refresh, 60 * 60 * 1000);
-
     // https://stackoverflow.com/a/9039885
     function isiOS() {
         return ["iPad Simulator", "iPhone Simulator", "iPod Simulator", "iPad", "iPhone", "iPod"].includes(navigator.platform) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
@@ -38,11 +39,23 @@
 
     onMount(() => {
         if (isiOS() && "standalone" in navigator && !navigator.standalone) iOSHomeScreenModal.show();
-        else if (!location.search.includes("standalone") && !localStorage.getItem("standalone-shown") && !isiOS()) {
+        else if (!location.search.includes("standalone") && !localStorage.getItem(standaloneShownKey) && !isiOS()) {
             pwaModal.show();
-            localStorage.setItem("standalone-shown", "true");
+            localStorage.setItem(standaloneShownKey, "true");
+        }
+
+        if (latestVersion.id > $latestVersionNumber) {
+            updateModal.show();
+            latestVersionNumber.set(latestVersion.id);
         }
     });
+
+    setInterval(async () => {
+        refresh();
+
+        const changelog = await getChangelog();
+        if (changelog.latest > $latestVersionNumber) location.reload();
+    }, 60 * 60 * 1000);
 
     let currentScrolled = 0;
     let busy = true;
@@ -105,6 +118,11 @@
 
     <Modal bind:this={pwaModal}>
         <h4>This website can be added as a PWA to your device. There should be a button somewhere to add it as an app. (this message will not be shown again)</h4>
+    </Modal>
+
+    <Modal bind:this={updateModal}>
+        <h2>The app has been updated!</h2>
+        <Changelog />
     </Modal>
 </main>
 

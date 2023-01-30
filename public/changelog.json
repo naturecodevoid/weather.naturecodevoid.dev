@@ -1,0 +1,16 @@
+{
+    "latest": 1,
+    "versions": [
+        {
+            "id": 1,
+            "date": "January 29th, 2023",
+            "changelog": [
+                "Added a changelog",
+                "Improved alert readability",
+                "Location will include place name when manually setting latitude and longitude",
+                "Location should be more accurate when using location to latitude and longitude conversion",
+                "Removed the unnecessary location to latitude and longitude conversion button in Settings"
+            ]
+        }
+    ]
+}
