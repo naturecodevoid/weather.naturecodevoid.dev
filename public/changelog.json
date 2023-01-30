@@ -6,6 +6,8 @@
             "date": "January 29th, 2023",
             "changelog": [
                 "Added a changelog",
+                "Moved refresh button to a floating button",
+                "Moved location and last refreshed text to a floating box between the 2 floating buttons",
                 "Improved alert readability",
                 "Location will include place name when manually setting latitude and longitude",
                 "Location should be more accurate when using location to latitude and longitude conversion",

@@ -3,12 +3,12 @@
     import { onMount, setContext } from "svelte";
 
     import Alert from "./components/Alert.svelte";
+    import Bubble from "./components/Bubble.svelte";
     import Changelog from "./components/Changelog.svelte";
     import Days from "./components/Days.svelte";
-    import WeatherIcon from "./components/icons/WeatherIcon.svelte";
     import Modal from "./components/Modal.svelte";
     import ModalBackground from "./components/ModalBackground.svelte";
-    import SettingsBubble from "./components/SettingsBubble.svelte";
+    import Settings from "./components/Settings.svelte";
     import WithLifecycle from "./components/WithLifecycle.svelte";
     import { getChangelog, latestVersion, latestVersionNumber } from "./lib/changelog";
     import { appContextKey, latLon, placeOutput, placeInput, standaloneShownKey } from "./lib/global";
@@ -22,6 +22,8 @@
     let iOSHomeScreenModal: Modal;
     let pwaModal: Modal;
     let updateModal: Modal;
+
+    let settings: Settings;
 
     let lastRefreshed = dayjs();
     let dataPromise = getData($latLon);
@@ -74,25 +76,17 @@
 
 <main>
     <br />
-
-    {#await dataPromise then { alerts }}
-        {#each alerts as alert}
-            <Alert {...alert} />
-        {/each}
-    {/await}
-
-    <div style="margin-bottom: 3em;">
-        <br />
-        <button class="refresh" on:click={refresh} disabled={busy}>Refresh <WeatherIcon name="refresh" widthHeight={10} /></button>
-        <h4 style="margin-top: 2em;">
-            Last refreshed: {lastRefreshed == null ? "Never" : lastRefreshed.format("M/D h:mm:ss A")}
-        </h4>
-        <h4>Location: {($placeOutput && !$placeInput && `${$placeOutput} (${$latLon.replace(",", ", ")})`) || $placeOutput || $latLon || "Not specified"}</h4>
-    </div>
-
     {#await dataPromise}
         <h4 style="margin-bottom: 3em;">Waiting for data...</h4>
     {:then { alerts, ...data }}
+        {#each alerts as alert}
+            <Alert {...alert} />
+        {/each}
+        {#if alerts.length > 0}
+            <br />
+            <hr style="margin-block-end: 1.25em;" />
+            <br />
+        {/if}
         <Days {...data} />
     {:catch error}
         <WithLifecycle mount={() => (busy = false)}><h4 style="color: red; margin-bottom: 3em;">{error}</h4></WithLifecycle>
@@ -102,7 +96,8 @@
         <h4>
             Made by <a href="https://naturecodevoid.dev/" target="_blank" rel="noreferrer">naturecodevoid</a><br />
             Open source at
-            <a href="https://github.com/naturecodevoid/weather.naturecodevoid.dev" target="_blank" rel="noreferrer">naturecodevoid/weather.naturecodevoid.dev</a><br />
+            <a href="https://github.com/naturecodevoid/weather.naturecodevoid.dev" target="_blank" rel="noreferrer">naturecodevoid/weather.naturecodevoid.dev</a> (if you have feedback or feature
+            suggestions, please open an issue!)<br />
             Data provided by <a href="https://www.weather.gov/" target="_blank" rel="noreferrer">weather.gov</a><br />
             Icons from
             <a href="https://github.com/erikflowers/weather-icons" target="_blank" rel="noreferrer">erikflowers/weather-icons</a>
@@ -110,7 +105,19 @@
         </h4>
     </div>
 
-    <SettingsBubble />
+    <br />
+    <br />
+
+    <div class="location-last-refreshed" style="left: calc(50% - 125px);">
+        <h4 style="padding-top: 7px">Last refreshed: {lastRefreshed == null ? "Never" : lastRefreshed.format("M/D h:mm:ss A")}</h4>
+        <h4>Location: {($placeOutput && !$placeInput && `${$placeOutput} (${$latLon.replace(",", ", ")})`) || $placeOutput || $latLon || "Not specified"}</h4>
+    </div>
+
+    <Bubble left="20px" name="refresh" onClick={refresh} bgColor={busy ? "var(--bg-disabled)" : "var(--bg-color)"} />
+
+    <Bubble left="calc(100% - 90px)" name="settings" onClick={() => settings.show()} />
+
+    <Settings bind:this={settings} />
 
     <Modal bind:this={iOSHomeScreenModal}>
         <h4>You seem to be on iOS or iPadOS which means you can add this website as an app to your homescreen for an even better experience! Just click the share icon and then Add to Home Screen.</h4>
@@ -129,8 +136,21 @@
 <ModalBackground />
 
 <style>
-    button.refresh {
-        border: 1px solid #3a3a3a;
-        margin-block: 0.5em 0;
+    div.location-last-refreshed {
+        width: 250px;
+        height: 70px;
+        position: fixed;
+        top: calc(100% - 90px);
+        z-index: 8;
+        background-color: var(--bg-color);
+        border: 1px solid var(--bg-shadow-color);
+        border-radius: 12px;
+    }
+
+    div.location-last-refreshed > h4 {
+        margin-block-start: 0px;
+        margin-block-end: 0px;
+        padding: 4px;
+        font-size: 0.95em;
     }
 </style>

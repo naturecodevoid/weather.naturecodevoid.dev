@@ -40,6 +40,7 @@
         try {
             data = await (await fetch(`https://s.naturecodevoid.dev/arcgis/${$placeInput}`)).json();
         } catch (e) {
+            latLon.set("");
             throw "Invalid location input";
         }
 
