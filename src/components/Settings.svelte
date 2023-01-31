@@ -18,6 +18,7 @@
     }
 
     function hide() {
+        clearTimeout(throttleId);
         getLatLonFromPlace().finally(() => app.refresh());
         document.body.classList.remove("modal-visible");
         document.body.classList.remove("modal-bg-visible");
@@ -31,6 +32,8 @@
     }> = getLatLonFromPlace();
 
     async function getLatLonFromPlace() {
+        if (!$placeInput) throw "Invalid location input";
+
         let data: {
             latitude: number;
             longitude: number;
@@ -54,8 +57,9 @@
     function onLocationInput() {
         if (throttleId) clearTimeout(throttleId);
         throttleId = setTimeout(() => {
+            latLon.set("");
             dataPromise = getLatLonFromPlace();
-        }, 1000);
+        }, 750);
     }
 </script>
 
@@ -63,7 +67,18 @@
     <div class="content">
         <h4>
             Location input:<br />
-            <input bind:this={placeInputElement} bind:value={$placeInput} on:input={onLocationInput} placeholder="Washington DC" />
+            <input
+                bind:this={placeInputElement}
+                bind:value={$placeInput}
+                on:input={onLocationInput}
+                on:keypress={(e) => {
+                    if (e.key == "Enter" && $placeInput) {
+                        clearTimeout(throttleId);
+                        latLon.set("");
+                        dataPromise = getLatLonFromPlace();
+                    }
+                }}
+                placeholder="Washington DC" />
         </h4>
 
         <details style="padding-bottom: 5px;">
