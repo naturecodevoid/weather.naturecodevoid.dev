@@ -2,6 +2,13 @@
     "latest": 1,
     "versions": [
         {
+            "id": 2,
+            "date": "February 1st, 2023",
+            "changelog": [
+                "Fixed manual latitude and longitude entry"
+            ]
+        },
+        {
             "id": 1,
             "date": "January 29th, 2023",
             "changelog": [
