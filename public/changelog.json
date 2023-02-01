@@ -5,7 +5,8 @@
             "id": 2,
             "date": "February 1st, 2023",
             "changelog": [
-                "Fixed manual latitude and longitude entry"
+                "Fixed manual latitude and longitude entry",
+                "Location text will scale to always fit in the info box"
             ]
         },
         {
