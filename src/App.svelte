@@ -56,8 +56,7 @@
         refresh();
 
         const changelog = await getChangelog();
-        // @ts-ignore
-        if (changelog.latest > $latestVersionNumber) location.reload(true);
+        if (changelog.latest > $latestVersionNumber) (location as any).reload(true);
     }, 60 * 60 * 1000);
 
     let currentScrolled = 0;
