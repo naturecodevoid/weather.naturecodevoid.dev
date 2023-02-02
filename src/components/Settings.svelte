@@ -92,8 +92,8 @@
                 </a>
                 to convert a location to latitude and longitude. I cannot do this directly from the browser for security reasons, so the only thing that the worker does is make a request to the geocoding
                 API and return the resulting latitude, longitude and place name. The worker does not do anything else with the data or input. However, you may want to look at
-                <a href="https://www.esri.com/en-us/privacy/overview" target="_blank" rel="noreferrer">ArcGIS/Esri's privacy policy</a> for more info on what ArcGIS/Esri does with the data/input. If
-                you don't trust ArcGIS/Esri or my Cloudflare worker, you can look in Advanced options for info on manually getting your latitude and longitude.
+                <a href="https://www.esri.com/en-us/privacy/overview" target="_blank" rel="noreferrer">ArcGIS/Esri's privacy policy</a> for more info on what ArcGIS/Esri does with the data/input. If you
+                don't trust ArcGIS/Esri or my Cloudflare worker, you can look in Advanced options for info on manually getting your latitude and longitude.
             </h4>
         </details>
 
