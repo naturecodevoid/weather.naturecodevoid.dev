@@ -7,7 +7,10 @@
             "changelog": [
                 "Fixed manual latitude and longitude entry",
                 "Location text will scale to always fit in the info box",
-                "Latitude and longitude will be rounded to 3 decimal points when displayed in the info box (this will not affect the actual value used for getting weather, just the displayed value)"
+                "Latitude and longitude will be rounded to 3 decimal points when displayed in the info box (this will not affect the actual value used for getting weather, just the displayed value)",
+                "Added a notice to resulting location that the location in the info box may differ from the resulting location",
+                "Reverted a UI change that made the padding between day elements much smaller",
+                "Fixed alerts not appearing in some places"
             ]
         },
         {
