@@ -6,12 +6,13 @@
     import Bubble from "./components/Bubble.svelte";
     import Changelog from "./components/Changelog.svelte";
     import Days from "./components/Days.svelte";
+    import InfoBox from "./components/InfoBox.svelte";
     import Modal from "./components/Modal.svelte";
     import ModalBackground from "./components/ModalBackground.svelte";
     import Settings from "./components/Settings.svelte";
     import WithLifecycle from "./components/WithLifecycle.svelte";
     import { getChangelog, latestVersion, latestVersionNumber } from "./lib/changelog";
-    import { appContextKey, latLon, placeOutput, placeInput, standaloneShownKey } from "./lib/global";
+    import { appContextKey, latLon, standaloneShownKey } from "./lib/global";
     import { getData } from "./lib/weather.gov";
 
     setContext(appContextKey, {
@@ -56,7 +57,7 @@
         refresh();
 
         const changelog = await getChangelog();
-        if (changelog.latest > $latestVersionNumber) location.reload();
+        if (changelog.latest > $latestVersionNumber) (location as any).reload(true);
     }, 60 * 60 * 1000);
 
     let currentScrolled = 0;
@@ -83,8 +84,7 @@
             <Alert {...alert} />
         {/each}
         {#if alerts.length > 0}
-            <br />
-            <hr style="margin-block-end: 1.25em;" />
+            <hr style="margin-block-end: 1.35em;" />
             <br />
         {/if}
         <Days {...data} />
@@ -108,10 +108,7 @@
     <br />
     <br />
 
-    <div class="location-last-refreshed" style="left: calc(50% - 125px);">
-        <h4 style="padding-top: 7px">Last refreshed: {lastRefreshed == null ? "Never" : lastRefreshed.format("M/D h:mm:ss A")}</h4>
-        <h4>Location: {($placeOutput && !$placeInput && `${$placeOutput} (${$latLon.replace(",", ", ")})`) || $placeOutput || $latLon || "Not specified"}</h4>
-    </div>
+    <InfoBox {lastRefreshed} />
 
     <Bubble left="20px" name="refresh" onClick={refresh} bgColor={busy ? "var(--bg-disabled)" : "var(--bg-color)"} />
 
@@ -134,23 +131,3 @@
 </main>
 
 <ModalBackground />
-
-<style>
-    div.location-last-refreshed {
-        width: 250px;
-        height: 70px;
-        position: fixed;
-        top: calc(100% - 90px);
-        z-index: 8;
-        background-color: var(--bg-color);
-        border: 1px solid var(--bg-shadow-color);
-        border-radius: 12px;
-    }
-
-    div.location-last-refreshed > h4 {
-        margin-block-start: 0px;
-        margin-block-end: 0px;
-        padding: 4px;
-        font-size: 0.95em;
-    }
-</style>

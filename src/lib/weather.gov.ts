@@ -46,8 +46,8 @@ export async function getData(latLon: string) {
     const hourlyForecast = await getValFromWeatherAPI<Forecast[]>(points.properties.forecastHourly, (obj) => obj.properties.periods);
     // in my very small amount of testing county seems to be more accurate than forecast zone, but feel free to tell me if this is not the case
     const alerts = (await getValFromWeatherAPI<any[]>(`https://api.weather.gov/alerts/active/zone/${points.properties.county.split("/").at(-1)}`, (obj) => obj.features))
-        .map<Alert>((val, i, arr) => (arr[i] = val.properties))
-        .filter((val) => val.affectedZones.includes(points.properties.forecastZone) && val.status == "Actual");
+        .map<Alert>((val) => val.properties)
+        .filter((val) => (val.affectedZones.includes(points.properties.forecastZone) || val.affectedZones.includes(points.properties.county)) && val.status == "Actual");
 
     return { dailyForecast, hourlyForecast, alerts };
 }

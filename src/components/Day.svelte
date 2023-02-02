@@ -67,7 +67,7 @@
 
     div {
         padding: 1em;
-        margin-bottom: 1em;
+        margin-bottom: 3em;
         width: calc(100% - 2rem);
         border-radius: 1rem;
         outline: 2px solid transparent;
