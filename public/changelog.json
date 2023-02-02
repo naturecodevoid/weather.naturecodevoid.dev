@@ -6,7 +6,8 @@
             "date": "February 1st, 2023",
             "changelog": [
                 "Fixed manual latitude and longitude entry",
-                "Location text will scale to always fit in the info box"
+                "Location text will scale to always fit in the info box",
+                "Latitude and longitude will be rounded to 3 decimal points when displayed in the info box (this will not affect the actual value used for getting weather, just the displayed value)"
             ]
         },
         {
