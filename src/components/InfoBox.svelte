@@ -6,7 +6,7 @@
 
     export let lastRefreshed: Dayjs;
 
-    const increment = 0.75;
+    const increment = 0.5;
     const originalSize = "0.95em";
 
     let box: HTMLDivElement;
@@ -35,11 +35,11 @@
     }
 
     function adjustLocationFontSize() {
-        if (!location) return console.log("skipping adjustment");
+        if (!location) return console.debug("skipping adjustment");
         location.textContent = getLocation();
         location.style.fontSize = originalSize;
-        const boxWidth = box.getBoundingClientRect().width;
-        if (location.getBoundingClientRect().width < boxWidth) return console.log("text fits in box");
+        const boxWidth = box.getBoundingClientRect().width - 8; // 4px of padding on either side
+        if (location.getBoundingClientRect().width < boxWidth) return console.debug("text fits in box");
 
         let currentFontSize = Number.parseFloat(getComputedStyle(location).fontSize);
 
@@ -49,7 +49,7 @@
             if (currentFontSize < increment) break;
         }
 
-        console.log(`adjusted text to ${location.style.fontSize}`);
+        console.debug(`adjusted text to ${location.style.fontSize}`);
     }
 </script>
 
