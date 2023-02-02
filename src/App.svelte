@@ -84,8 +84,7 @@
             <Alert {...alert} />
         {/each}
         {#if alerts.length > 0}
-            <br />
-            <hr style="margin-block-end: 1.25em;" />
+            <hr style="margin-block-end: 1.35em;" />
             <br />
         {/if}
         <Days {...data} />
